@@ -1,7 +1,7 @@
 # Weather-Dashboard !
 
 # Summary
-In this project a weather dashboard was created using a third-party API that will run in the browser and feature dynamically updated HTML and CSS.
+In this project a weather dashboard was created using a third-party API (OpenWeather API) that will run in the browser and feature dynamically updated HTML and CSS.
 
 # User Story:
 AS A traveler
@@ -21,3 +21,6 @@ Acceptance Criteria:
 - THEN I am again presented with current and future conditions for that city
 - WHEN I open the weather dashboard
 - THEN I am presented with the last searched city forecast
+
+## Screen Shot
+![](Assets/ScreenShot.png)
