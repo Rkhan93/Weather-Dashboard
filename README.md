@@ -1,5 +1,8 @@
 # Weather-Dashboard !
 
+# Link
+https://rkhan93.github.io/Weather-Dashboard/
+
 # Summary
 In this project a weather dashboard was created using a third-party API (OpenWeather API) that will run in the browser and feature dynamically updated HTML and CSS.
 
@@ -22,5 +25,6 @@ Acceptance Criteria:
 - WHEN I open the weather dashboard
 - THEN I am presented with the last searched city forecast
 
-## Screen Shot
+# Screen Shot
 ![](Assets/ScreenShot.png)
+
