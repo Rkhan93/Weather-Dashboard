@@ -1,8 +1,16 @@
+body {background-color: rgb(206, 206, 206);}
+
 nav h1{
     color: orange;
     }
+   
+    h4 {
+        
+        color: rgb(18, 155, 201);
+      }
     
-    aside {
+    
+      aside {
         margin-right: 20px;
         padding: 20px;
         clear: both;
@@ -43,9 +51,7 @@ nav h1{
     }
     
     
-    
-    
-.col-2{
+    .col-2{
     background-color: rgb(147, 189, 243);
     border-color: blue;
     border: 7px ;
