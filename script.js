@@ -1,128 +1,117 @@
-$(document).ready(function() {
-  $("#search-button").on("click", function() {
-    var searchValue = $("#search-value").val();
+var todayEl = moment().format('MM/DD/YYYY')
 
-    // clear input box
-    $("#search-value").val("");
+// Major Cities that show up 
+var cityList = ["Dallas", "Los Angeles", "Miami", "Chicago", "New York City"]
 
-    searchWeather(searchValue);
-  });
+//Adding Cities on the side
+function addCities() {
 
-  $(".history").on("click", "li", function() {
-    searchWeather($(this).text());
-  });
+    // empties previously added cities
+    $("#cities").empty();
 
-  function makeRow(text) {
-    var li = $("<li>").addClass("list-group-item list-group-item-action").text(text);
-    $(".history").append(li);
-  }
+    // Looping through the array of cities
+    for (var i = 0; i < cityList.length; i++) {
 
-  function searchWeather(searchValue) {
-    $.ajax({
-      type: "GET",
-      url: "http://api.openweathermap.org/data/2.5/weather?q=" + searchValue + "&appid=7ba67ac190f85fdba2e2dc6b9d32e93c&units=imperial",
-      dataType: "json",
-      success: function(data) {
-        // create history link for this search
-        if (history.indexOf(searchValue) === -1) {
-          history.push(searchValue);
-          window.localStorage.setItem("history", JSON.stringify(history));
+        // Then dynamicaly generating buttons for each city in the array.
+        var a = $("<row>");
+        // Adding a class
+        a.addClass("city-btn btn btn-outline-secondary");
+        // Adding a data-attribute with a value of the city at index i
+        a.attr("data-name", cityList[i]);
+        // Providing the button's text with a value of the city at index i
+        a.text(cityList[i]);
+        // Adding the button to the HTML
+        $("#cities").append(a);
+    }
+}
+
+addCities()
+
+$("#search-button").on("click", function (event) {
+   
+    event.preventDefault();
+   
+    var city = $("input").val().trim();
     
-          makeRow(searchValue);
-        }
-        
-        // clear any old content
-        $("#today").empty();
+    cityList.push(city);
+   
+    addCities();
 
-        // create html content for current weather
-        var title = $("<h3>").addClass("card-title").text(data.name + " (" + new Date().toLocaleDateString() + ")");
-        var card = $("<div>").addClass("card");
-        var wind = $("<p>").addClass("card-text").text("Wind Speed: " + data.wind.speed + " MPH");
-        var humid = $("<p>").addClass("card-text").text("Humidity: " + data.main.humidity + "%");
-        var temp = $("<p>").addClass("card-text").text("Temperature: " + data.main.temp + " °F");
-        var cardBody = $("<div>").addClass("card-body");
-        var img = $("<img>").attr("src", "http://openweathermap.org/img/w/" + data.weather[0].icon + ".png");
-
-        // merge and add to page
-        title.append(img);
-        cardBody.append(title, temp, humid, wind);
-        card.append(cardBody);
-        $("#today").append(card);
-
-        // call follow-up api endpoints
-        getForecast(searchValue);
-        getUVIndex(data.coord.lat, data.coord.lon);
-      }
-    });
-  }
-  
-  function getForecast(searchValue) {
-    $.ajax({
-      type: "GET",
-      url: "http://api.openweathermap.org/data/2.5/forecast?q=" + searchValue + "&appid=7ba67ac190f85fdba2e2dc6b9d32e93c&units=imperial",
-      dataType: "json",
-      success: function(data) {
-        // overwrite any existing content with title and empty row
-        $("#forecast").html("<h4 class=\"mt-3\">5-Day Forecast:</h4>").append("<div class=\"row\">");
-
-        // loop over all forecasts (by 3-hour increments)
-        for (var i = 0; i < data.list.length; i++) {
-          // only look at forecasts around 3:00pm
-          if (data.list[i].dt_txt.indexOf("15:00:00") !== -1) {
-            // create html elements for a bootstrap card
-            var col = $("<div>").addClass("col-md-2");
-            var card = $("<div>").addClass("card bg-primary text-white");
-            var body = $("<div>").addClass("card-body p-2");
-
-            var title = $("<h5>").addClass("card-title").text(new Date(data.list[i].dt_txt).toLocaleDateString());
-
-            var img = $("<img>").attr("src", "http://openweathermap.org/img/w/" + data.list[i].weather[0].icon + ".png");
-
-            var p1 = $("<p>").addClass("card-text").text("Temp: " + data.list[i].main.temp_max + " °F");
-            var p2 = $("<p>").addClass("card-text").text("Humidity: " + data.list[i].main.humidity + "%");
-
-            // merge together and put on page
-            col.append(card.append(body.append(title, img, p1, p2)));
-            $("#forecast .row").append(col);
-          }
-        }
-      }
-    });
-  }
-
-  function getUVIndex(lat, lon) {
-    $.ajax({
-      type: "GET",
-      url: "http://api.openweathermap.org/data/2.5/uvi?appid=7ba67ac190f85fdba2e2dc6b9d32e93c&lat=" + lat + "&lon=" + lon,
-      dataType: "json",
-      success: function(data) {
-        var uv = $("<p>").text("UV Index: ");
-        var btn = $("<span>").addClass("btn btn-sm").text(data.value);
-        
-        // change color depending on uv value
-        if (data.value < 3) {
-          btn.addClass("btn-success");
-        }
-        else if (data.value < 7) {
-          btn.addClass("btn-warning");
-        }
-        else {
-          btn.addClass("btn-danger");
-        }
-        
-        $("#today .card-body").append(uv.append(btn));
-      }
-    });
-  }
-
-  // get current history, if any
-  var history = JSON.parse(window.localStorage.getItem("history")) || [];
-
-  if (history.length > 0) {
-    searchWeather(history[history.length-1]);
-  }
-
-  for (var i = 0; i < history.length; i++) {
-    makeRow(history[i]);
-  }
 });
+
+//get data from openweather 
+var getCity = function () {
+    var city = $(this).attr("data-name");
+    var coordURL = "https://api.openweathermap.org/data/2.5/weather?&units=imperial&appid=88f3ebac0aabaa0bea9e67e3203ea958&q=" + city;
+    $("#forecast").empty()
+    // Creating an AJAX call
+    $.ajax({
+        url: coordURL,
+        method: "GET"
+    }).then(function (response) {
+        console.log(response)
+        var showCity = response.name;
+        var icon = "https://openweathermap.org/img/wn/" + response.weather[0].icon + ".png";
+        var showIcon = $("<img>").attr("src", icon);
+        console.log("City: " + response.name);
+        console.log("icon: " + response.weather[0].icon)
+        $("#city").text(showCity + " " + todayEl);
+        $("#city").append(showIcon)
+
+
+        var lonlat = "&lat=" + response.coord.lat + "&lon=" + response.coord.lon
+        console.log(lonlat)
+        var queryURL = "https://api.openweathermap.org/data/2.5/onecall?&units=imperial&appid=88f3ebac0aabaa0bea9e67e3203ea958&q=" + lonlat;
+
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(function (response) {
+            console.log(response);
+            //weather results
+            $("#temp").text("Temperature: " + response.current.feels_like) + "F";
+            $("#humid").text("Humidity: " + response.current.humidity + "%");
+            $("#wind").text("Wind Speed: " + response.current.wind_speed + " mph");
+
+
+            // UV Index
+            var UVIndex = response.current.uvi
+            $("#uvIndex").text("UV Index: " + UVIndex)
+
+            function addForecast() {
+
+                var days = response.daily
+                // Looping through array of cities
+                for (var i = 1; i < 6; i++) {
+                    console.log(response.daily.length)
+                    //var to create a div
+                    var a = $("<div>");
+                    //format into MM/DD/YYY
+                    var unix = response.daily[i].dt
+                    var dates = moment.unix(unix).format('MM/DD/YYYY')
+                    //gets value into image
+                    var icon = "https://openweathermap.org/img/wn/" + response.daily[i].weather[0].icon + ".png";
+                    var showIcon = $("<img>").attr("src", icon);
+                    //temperature data
+                    var temp = response.daily[i].feels_like.day
+                    var fTemp = "Temp: " + temp + " F"
+                    //humidity data
+                    var humid = response.daily[i].humidity
+                    var fHumid = "Humidity: " + humid + "%"
+                    console.log(dates)
+                    a.addClass("col-2");
+                    
+                    a.text(dates);
+                    a.append(showIcon);
+                    a.append(fTemp);
+                    a.append(" " + fHumid);
+                    $("#forecast").append(a);
+                }
+            }
+            addForecast()
+        })
+
+    });
+};
+
+$(document).on("click", ".city-btn", getCity);

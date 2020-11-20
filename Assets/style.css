@@ -1,0 +1,53 @@
+nav h1{
+    color: orange;
+    }
+    
+    aside {
+        margin-right: 20px;
+        padding: 20px;
+        clear: both;
+        float: left;
+        overflow: auto;
+        width: 20%;
+        min-width: 240px;
+        height: 100%;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri;
+    }
+    
+    #cities {
+        padding: 0;
+        margin: 0;
+        
+    }
+    
+    #city{
+        font-size: x-large;
+    }
+    
+    .container{
+        border-width: thin;
+        border-style: solid;
+        border-color:black;
+    }
+    
+    .col-8{
+        margin-top: 20px;
+    }
+    
+    .row{
+        margin: 2px;
+    }
+    
+    #bigbox{
+        max-width: 80%;
+    }
+    
+    
+    
+    
+.col-2{
+    background-color: rgb(147, 189, 243);
+    border-color: blue;
+    border: 7px ;
+    margin: 4px;
+    }
